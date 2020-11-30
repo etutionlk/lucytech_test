@@ -22,7 +22,8 @@ class ApiController extends Controller
     //max win amount
     protected $max_win_amount = 20000;
 
-    public function bet(Request $request) {
+    public function bet(Request $request)
+    {
 
         $validate = json_decode($this->validateRequest($request));
 
@@ -33,46 +34,45 @@ class ApiController extends Controller
             $selections = json_decode($request->input("selections"));
             $player_id = $request->input("player_id");
             $player =new PlayerController;
-            $player->createPlayer($player_id,$stake,$selections);
+            $player->createPlayer($player_id, $stake, $selections);
             \Cache::forget('key');
-            return response()->json($validate,201);
-        }else {
+            return response()->json($validate, 201);
+        } else {
             \Cache::forget('key');
-            return response()->json($validate,401);
+            return response()->json($validate, 401);
         }
     }
 
 
-    public function validateRequest($request) {
+    public function validateRequest($request)
+    {
         $response = [];
 
         try {
-
             if (\Cache::has('key')) {
                 $response["errors"][] = ["code"=>10,"message"=>"Your previous action is not finished yet"];
                 return $response;
-            }else {
+            } else {
                 $token = \Str::random(40);
-                \Cache ::put("key", $token , 15);
+                \Cache ::put("key", $token, 15);
             }
 
 
             //check json request is an empty
             if (empty($request->except('_token'))) {
                 $response["errors"][] = ["code"=>0,"message"=>"Unknown error"];
-            }else if ($request->has("player_id") && $request->has("selections") && $request->has("selections")) {
-
+            } elseif ($request->has("player_id") && $request->has("selections") && $request->has("selections")) {
                 //check input is numeric or not
                 if (is_numeric($request->input("stake_amount"))) {
                     $stake = (float) $request->input("stake_amount");
-                }else {
+                } else {
                     throw new \Exception("Stake amount is not a number");
                 }
 
                 //check input is numeric or not
                 if (is_numeric($request->input("player_id"))) {
                     $player_id = (float) $request->input("player_id");
-                }else {
+                } else {
                     throw new \Exception("Player Id is not a number");
                 }
 
@@ -81,15 +81,21 @@ class ApiController extends Controller
                 //check stake values
                 if ($stake < $this->min_amount) {
                     $response["errors"][] = ["code"=>2,"message"=>"Minimum stake amount is :".__($this->min_amount)];
-                }else if ($stake > $this->max_amount) {
+                } elseif ($stake > $this->max_amount) {
                     $response["errors"][] = ["code"=>3,"message"=>"Maximum stake amount is :".__($this->max_amount)];
                 }
 
                 //check selections
                 if (count($selections) < $this->min_selections) {
-                    $response["errors"][] = ["code"=>4,"message"=>"Minimum number of selections is :".__($this->min_selections)];
-                }else if (count($selections) > $this->max_selections) {
-                    $response["errors"][] = ["code"=>5,"message"=>"Maximum number of selections is :".__($this->max_selections)];
+                    $response["errors"][] = [
+                        "code"=>4,
+                        "message"=>"Minimum number of selections is :".__($this->min_selections)
+                    ];
+                } elseif (count($selections) > $this->max_selections) {
+                    $response["errors"][] = [
+                        "code"=>5,
+                        "message"=>"Maximum number of selections is :".__($this->max_selections)
+                    ];
                 }
 
                 $max_win_amount = $stake;
@@ -110,7 +116,7 @@ class ApiController extends Controller
                         $temp[] = ["code"=>7,"message"=>"Maximum odds are :".__($this->max_odds)];
                     }
 
-                    if (!empty($duplicates) && (in_array($selection->id,$duplicates))) {
+                    if (!empty($duplicates) && (in_array($selection->id, $duplicates))) {
                         $temp[] = ["code"=>8,"message"=>"Duplicate selection found"];
                     }
 
@@ -122,7 +128,7 @@ class ApiController extends Controller
                 }
 
                 //check sufficient balance
-                $has_balance = $this->checkSufficientBalance($stake,$player_id);
+                $has_balance = $this->checkSufficientBalance($stake, $player_id);
                 if (!$has_balance) {
                     $response["errors"][] = ["code"=>11,"message"=>"Insufficient balance"];
                 }
@@ -130,13 +136,10 @@ class ApiController extends Controller
                 if ($max_win_amount > $this->max_win_amount) {
                     $response["errors"][] = ["code"=>9,"message"=>"Maximum win amount is :".__($this->max_win_amount)];
                 }
-
-
-            }else {
+            } else {
                 $response["errors"][] = ["code"=>1,"message"=>"Betslip structure mismatch"];
             }
-
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $response["errors"][] = ["code"=>0,"message"=>"Unknown error"];
         }
 
@@ -145,7 +148,8 @@ class ApiController extends Controller
     }
 
     //get duplicate elements of an array
-    public function checkDuplicateSelections($selections) {
+    public function checkDuplicateSelections($selections)
+    {
         $ids = [];
         foreach ($selections as $selection) {
             $ids[] = $selection->id;
@@ -154,18 +158,19 @@ class ApiController extends Controller
     }
 
 
-    public function checkSufficientBalance($stake,$player_id) {
+    public function checkSufficientBalance($stake, $player_id)
+    {
         $player = Player::find($player_id);
 
         if ($player == null) {
             $current_balance = 1000.00;
-        }else {
+        } else {
             $current_balance = $player->balance;
         }
         $balance = $current_balance - $stake;
         if ($balance > 0) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }

@@ -9,7 +9,5 @@ class BetSelection extends Model
 {
     use HasFactory;
 
-//    protected $primaryKey = "id";
-
     protected $fillable = ["bet_id","selection_id","odds"];
 }

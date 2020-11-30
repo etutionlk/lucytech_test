@@ -16,8 +16,8 @@ class BalanceTransaction extends Migration
         Schema::create('balance_transactions', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->bigInteger("player_id")->unsigned();
-            $table->float("amount",8,2);
-            $table->float("amount_before",8,2);
+            $table->float("amount", 8, 2);
+            $table->float("amount_before", 8, 2);
             $table->timestamps();
 
             $table->foreign("player_id")->references("player_id")->on("players")

@@ -15,7 +15,7 @@ class CreateBetsTable extends Migration
     {
         Schema::create('bets', function (Blueprint $table) {
             $table->id();
-            $table->float("stake_amount",8,2);
+            $table->float("stake_amount", 8, 2);
             $table->timestamps();
         });
     }

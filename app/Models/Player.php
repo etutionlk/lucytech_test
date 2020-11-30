@@ -12,8 +12,4 @@ class Player extends Model
     protected $primaryKey = "player_id";
 
     protected $fillable = ["player_id"];
-
-//    protected $guarded = "player_id";
-
-
 }

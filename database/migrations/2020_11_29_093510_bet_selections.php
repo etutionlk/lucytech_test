@@ -17,7 +17,7 @@ class BetSelections extends Migration
             $table->bigIncrements("id");
             $table->bigInteger("bet_id")->unsigned();
             $table->bigInteger("selection_id");
-            $table->float("odds",8,3);;
+            $table->float("odds", 8, 3);
             $table->timestamps();
 
             $table->foreign("bet_id")->references("id")->on("bets")

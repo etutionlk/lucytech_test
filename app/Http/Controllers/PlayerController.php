@@ -17,16 +17,16 @@ class PlayerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function createPlayer($player_id,$stake,$selections)
+    public function createPlayer($player_id, $stake, $selections)
     {
 
         //add bet details
-        $this->addBetDetails($stake,$selections);
+        $this->addBetDetails($stake, $selections);
 
         $player = Player::where('player_id', $player_id)->first();
         if ($player != null) {
-            $this->updatePlayer($player_id,$stake);
-        }else {
+            $this->updatePlayer($player_id, $stake);
+        } else {
             Player::create(["player_id"=> $player_id]);
 
             //add bet transaction
@@ -52,7 +52,7 @@ class PlayerController extends Controller
      * @param  \App\Models\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function updatePlayer($player_id,$stake)
+    public function updatePlayer($player_id, $stake)
     {
         $player = Player::find($player_id);
 
@@ -75,7 +75,7 @@ class PlayerController extends Controller
      * @param  \App\Models\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function addBetDetails($stake,$selections)
+    public function addBetDetails($stake, $selections)
     {
         //Add bet details
         $bet = Bet::create(["stake_amount"=>$stake]);
@@ -90,3 +90,4 @@ class PlayerController extends Controller
         }
     }
 }
+

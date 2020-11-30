@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::post("bet",[\App\Http\Controllers\ApiController::class,"bet"]);
+Route::post("bet", [\App\Http\Controllers\ApiController::class,"bet"]);
